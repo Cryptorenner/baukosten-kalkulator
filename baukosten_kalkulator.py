@@ -17,11 +17,24 @@ def berechne_monatliche_rate(kreditsumme, zinssatz, laufzeit):
         rate = kreditsumme / anzahl_monate
     return rate
 
+def berechne_kfw_foerderung(kfw_standard, kinder):
+    """Berechnet die mögliche KfW-Förderung basierend auf dem Standard und Kinderanzahl."""
+    foerderung = 0
+    if kfw_standard == "KfW 40":
+        foerderung = 100000  # Standardförderung für KfW 40
+    elif kfw_standard == "KfW 40 Plus":
+        foerderung = 150000  # Standardförderung für KfW 40 Plus
+    
+    if kinder > 0:
+        foerderung += kinder * 5000  # Zusätzliche Förderung pro Kind
+    
+    return foerderung
+
 # Streamlit App Layout
 st.set_page_config(page_title="Baukosten- & Finanzierungskalkulator", page_icon="🏡", layout="centered")
 
 st.title("🏡 Baukosten- & Finanzierungskalkulator für Ihr Fertighaus")
-st.write("Berechnen Sie die voraussichtlichen Kosten Ihres Bauprojekts und die monatliche Finanzierungsrate.")
+st.write("Berechnen Sie die voraussichtlichen Kosten Ihres Bauprojekts, die Finanzierungsmöglichkeiten und die möglichen KfW-Förderungen.")
 
 # Eingabefelder für Baukosten
 with st.form("baukosten_form"):
@@ -49,18 +62,19 @@ if submit_button:
     st.write("📞 **Kontaktieren Sie uns für eine kostenlose Beratung!**")
 
 # Finanzierungskalkulator
-st.header("💰 Finanzierungskalkulator")
-st.write("Berechnen Sie die voraussichtliche monatliche Rate für Ihre Baufinanzierung.")
+st.header("💰 Finanzierungskalkulator & KfW-Förderung")
+st.write("Berechnen Sie Ihre voraussichtliche monatliche Rate und Ihre möglichen KfW-Förderungen.")
 
-# Hinweis auf aktuelle Zinssätze
-st.info("💡 Aktuelle Zinssätze für Baufinanzierungen liegen je nach Bank zwischen **3,5% - 5,5% p.a.** (Stand 2025).")
+# KfW-Förderung Dropdown
+kfw_standard = st.selectbox("Welcher KfW-Standard trifft auf Ihr Bauvorhaben zu?", ["Keiner", "KfW 40", "KfW 40 Plus"])
+kinder = st.number_input("Anzahl der Kinder unter 18 Jahren im Haushalt", min_value=0, max_value=10, value=0, step=1)
 
-# Sicherstellen, dass gesamtkosten definiert ist
-if 'gesamtkosten' not in locals():
-    gesamtkosten = 200000  # Standardwert, falls keine Berechnung stattfand
+# Berechnung der KfW-Förderung
+kfw_foerderung = berechne_kfw_foerderung(kfw_standard, kinder)
+st.write(f"💰 **Mögliche KfW-Förderung:** {kfw_foerderung:,.2f} €")
 
-# Eingaben für Finanzierungsrechner
-kreditsumme = st.number_input("Benötigte Kreditsumme (€)", min_value=10000, max_value=5000000, value=int(gesamtkosten), step=10000)
+# Finanzierungsrechner
+kreditsumme = st.number_input("Benötigte Kreditsumme (€)", min_value=10000, max_value=5000000, value=max(10000, int(gesamtkosten - kfw_foerderung)), step=10000)
 zinssatz = st.slider("Zinssatz (% p.a.)", min_value=1.0, max_value=10.0, value=4.0, step=0.1)
 laufzeit = st.slider("Laufzeit des Kredits (Jahre)", min_value=5, max_value=35, value=20, step=1)
 
@@ -72,6 +86,8 @@ st.write(f"💰 **Monatliche Rate:** {monatliche_rate:,.2f} €")
 st.write(f"📅 **Gesamtkosten des Kredits über {laufzeit} Jahre:** {monatliche_rate * laufzeit * 12:,.2f} €")
 
 st.success("✅ Planen Sie Ihre Finanzierung mit diesen Werten und kontaktieren Sie uns für weitere Beratung!")
+
+
 
 
 

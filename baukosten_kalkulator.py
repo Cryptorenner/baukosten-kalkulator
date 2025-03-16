@@ -55,6 +55,10 @@ st.write("Berechnen Sie die voraussichtliche monatliche Rate für Ihre Baufinanz
 # Hinweis auf aktuelle Zinssätze
 st.info("💡 Aktuelle Zinssätze für Baufinanzierungen liegen je nach Bank zwischen **3,5% - 5,5% p.a.** (Stand 2025).")
 
+# Sicherstellen, dass gesamtkosten definiert ist
+if 'gesamtkosten' not in locals():
+    gesamtkosten = 200000  # Standardwert, falls keine Berechnung stattfand
+
 # Eingaben für Finanzierungsrechner
 kreditsumme = st.number_input("Benötigte Kreditsumme (€)", min_value=10000, max_value=5000000, value=int(gesamtkosten), step=10000)
 zinssatz = st.slider("Zinssatz (% p.a.)", min_value=1.0, max_value=10.0, value=4.0, step=0.1)
@@ -68,5 +72,6 @@ st.write(f"💰 **Monatliche Rate:** {monatliche_rate:,.2f} €")
 st.write(f"📅 **Gesamtkosten des Kredits über {laufzeit} Jahre:** {monatliche_rate * laufzeit * 12:,.2f} €")
 
 st.success("✅ Planen Sie Ihre Finanzierung mit diesen Werten und kontaktieren Sie uns für weitere Beratung!")
+
 
 

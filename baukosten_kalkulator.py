@@ -36,6 +36,10 @@ st.set_page_config(page_title="Baukosten- & Finanzierungskalkulator", page_icon=
 st.title("🏡 Baukosten- & Finanzierungskalkulator für Ihr Fertighaus")
 st.write("Berechnen Sie die voraussichtlichen Kosten Ihres Bauprojekts, die Finanzierungsmöglichkeiten und die möglichen KfW-Förderungen.")
 
+# Initialisierung der Variablen für Fehlervermeidung
+gesamtkosten = 0
+kfw_foerderung = 0
+
 # Eingabefelder für Baukosten
 with st.form("baukosten_form"):
     wohnflaeche = st.number_input("Wohnfläche in m²", min_value=50, max_value=500, value=150, step=10)
@@ -70,7 +74,8 @@ kfw_standard = st.selectbox("Welcher KfW-Standard trifft auf Ihr Bauvorhaben zu?
 kinder = st.number_input("Anzahl der Kinder unter 18 Jahren im Haushalt", min_value=0, max_value=10, value=0, step=1)
 
 # Berechnung der KfW-Förderung
-kfw_foerderung = berechne_kfw_foerderung(kfw_standard, kinder)
+if kfw_standard != "Keiner":
+    kfw_foerderung = berechne_kfw_foerderung(kfw_standard, kinder)
 st.write(f"💰 **Mögliche KfW-Förderung:** {kfw_foerderung:,.2f} €")
 
 # Finanzierungsrechner
@@ -86,6 +91,8 @@ st.write(f"💰 **Monatliche Rate:** {monatliche_rate:,.2f} €")
 st.write(f"📅 **Gesamtkosten des Kredits über {laufzeit} Jahre:** {monatliche_rate * laufzeit * 12:,.2f} €")
 
 st.success("✅ Planen Sie Ihre Finanzierung mit diesen Werten und kontaktieren Sie uns für weitere Beratung!")
+
+
 
 
 
